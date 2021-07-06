@@ -1,0 +1,122 @@
+/* "use strict";
+
+const events = require( "./events" );
+const appConfig = require ( "../config" );
+const sql = require('mssql');
+
+const config = {
+    user: appConfig.sql.USER,
+    password: appConfig.sql.password,
+    server: appConfig.sql.server, // You can use 'localhost\\instance' to connect to named instance
+    database: appConfig.sql.database
+};
+
+ const client = async => {
+    try {
+        let pool = null;
+        const closePool = async => {
+            try {
+                pool.close();
+                pool=null;
+            }
+            catch( err ) {
+                pool = null;
+                console.log( err );
+            }
+        };    
+        const getConnection = async => {
+            try {
+                if ( pool ){
+                    return pool;
+                }
+                pool = sql.connect( config );
+                pool.on( "error" , async err => {
+                    console.log(err);
+                    await closePool();
+                });
+                return pool;
+            } catch ( err ) {
+                console.log ( err );
+                pool=null;
+            }
+            let result1 = pool.request()
+            .query('select * from events')            
+            console.dir(result1)
+        };                
+    
+        // Stored procedure
+        
+        /* let result2 = await pool.request()
+            .input('input_parameter', sql.Int, value)
+            .output('output_parameter', sql.VarChar(50))
+            .execute('procedure_name')
+        
+        console.dir(result2) */
+
+//     } catch ( err ) {
+//         console.log( err );
+//     }  
+//  };
+// module.exports.register = async server => {
+//     await events.register( { sql, getConnection } );
+
+
+// /* "use strict";
+
+// const events = require( "./events" );
+// const sql = require( "mssql" );
+// const config = require ( "../../src/config" );
+
+
+// const sqlConfig = { 
+//         server: config.sql.server,
+//         database:config.sql.database,
+//         USER: config.sql.USER,
+//         password: config.sql.password
+//     } ;
+
+//     console.log ('checking sql configurations');
+//     console.log ( sqlConfig.server );
+//     console.log ( sqlConfig.database );
+//     console.log ( sqlConfig.USER );
+//     console.log ( sqlConfig.password );
+
+// const client =async ( server, sqlConfig ) => {
+    
+//     let pool = null;
+//     const closePool = async () => {
+//         try {
+//             await pool.close();
+//             pool=null;
+//         }
+//         catch( err ) {
+//             pool = null;
+//             console.log( err );
+//         }
+//     };
+//     const getConnection = async (sqlConfig) => {
+//         try {
+//             if ( pool ){
+//                 return pool;
+//             }
+//             pool = await sql.connect( sqlConfig );
+//             pool.on( "error" , async err => {
+//                 console.log(err);
+//                 await closePool();
+//             });
+//             return pool;
+//         } catch ( err ) {
+
+//             console.log ( err );
+            
+//             pool=null;
+//         }
+//     };
+    
+//     return {
+//         events: await events.register( { sql, getConnection } )
+//     }
+// };
+
+// module.exports = client;
+//  */ 
