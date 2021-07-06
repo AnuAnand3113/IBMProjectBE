@@ -9,7 +9,6 @@ module.exports.register = async server => {
                 const db = request.server.plugins.sql.client;
                 const userId = "546";
                 const res = await db.events.getEvents( userId );
-                console.log("Gottttt");
                 console.log(res);
                 return res;
             } catch( err ) {
